@@ -1,0 +1,2020 @@
+MT Slip Solution
+Slip1 Q.1
+A) Write an Android Program to demonstrate Activity life Cycle. [10]
+Ans:
+Main Activity
+package com.example.slip1a;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.Toast;
+@SuppressLint("NewApi")
+public class MainActivity extends Activity {
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+notify("onCreate");
+}
+@Override
+protected void onPause() {
+super.onPause();
+notify("onPause");
+}
+@Override
+protected void onResume() {
+super.onResume();
+notify("onResume");
+}
+@Override
+protected void onStop() {
+super.onStop();
+notify("onStop");
+}
+@Override
+protected void onDestroy() {
+super.onDestroy();
+notify("onDestroy");
+}
+@Override
+protected void onRestoreInstanceState(Bundle savedInstanceState) {
+super.onRestoreInstanceState(savedInstanceState);
+notify("onRestoreInstanceState");
+}
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+super.onSaveInstanceState(outState);
+notify("onSaveInstanceState");
+}
+private void notify(String methodName) {
+String name = this.getClass().getName();
+String[] strings = name.split("\\.");
+Toast.makeText(getApplicationContext(),
+
+methodName + "" + strings[strings.length - 1],
+Toast.LENGTH_LONG).show();
+}
+}
+==================================================================================================
+B) Create table Customer (id, name, address, phno). Create Android Application for performing the
+following operation on the table. (usingsqlite database)
+i) Insert New Customer Details.
+ii) Show All the Customer Details
+[20]
+
+ANS:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+</androidx.constraintlayout.widget.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/id"
+android:layout_width="268dp"
+android:layout_height="48dp"
+android:layout_marginTop="108dp"
+android:hint="@string/id"
+android:inputType="number"
+app:layout_constraintBottom_toTopOf="@+id/name"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent"
+android:autofillHints="" />
+<EditText
+android:id="@+id/name"
+android:layout_width="268dp"
+android:layout_height="48dp"
+android:layout_marginTop="204dp"
+android:hint="Name"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.496"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+<EditText
+android:id="@+id/address"
+android:layout_width="266dp"
+android:layout_height="49dp"
+
+android:layout_marginTop="28dp"
+android:hint="address"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.524"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/name" />
+<EditText
+android:id="@+id/phno"
+android:layout_width="266dp"
+android:layout_height="43dp"
+android:hint="phone number"
+app:layout_constraintBottom_toTopOf="@+id/insert"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.524"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/address"
+app:layout_constraintVertical_bias="0.357" />
+<Button
+android:id="@+id/insert"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="insert"
+app:layout_constraintBottom_toTopOf="@+id/show"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.501"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/phno"
+app:layout_constraintVertical_bias="0.875" />
+<Button
+android:id="@+id/show"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginBottom="168dp"
+android:text="Show"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.501"
+app:layout_constraintStart_toStartOf="parent" />
+<TextView
+android:id="@+id/textView"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Enter Customer Details"
+app:layout_constraintBottom_toTopOf="@+id/id"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip1b;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+EditText id,name,address,phno;
+Button insert,show;
+DBAdapter DB;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+id=findViewById(R.id.id);
+name=findViewById(R.id.name);
+address=findViewById(R.id.address);
+phno=findViewById(R.id.phno);
+insert=findViewById(R.id.insert);
+show=findViewById(R.id.show);
+DB=new DBAdapter(this);
+insert.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+int id1=Integer.parseInt(id.getText().toString());
+String name1=name.getText().toString();
+String address1=address.getText().toString();
+String phno1=phno.getText().toString();
+boolean
+checkinsertdata=DB.insertdata(id1,name1,address1,phno1);
+if(checkinsertdata)
+Toast.makeText(MainActivity.this,"inserted
+succesfull",Toast.LENGTH_SHORT).show();
+else
+Toast.makeText(MainActivity.this,"inserted
+unsuccesfull",Toast.LENGTH_SHORT).show();
+}
+});
+show.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+Cursor res;
+
+res = DB.getdata();
+if(res.getCount()==0)
+{
+Toast.makeText(MainActivity.this,"NO
+ENTRY",Toast.LENGTH_SHORT).show();
+return;
+}
+StringBuffer buffer=new StringBuffer();
+while(res.moveToNext())
+{
+buffer.append("Id :"+res.getString(0)+"\n");
+buffer.append("Name :"+res.getString(1)+"\n");
+buffer.append("Address :"+res.getString(2)+"\n");
+buffer.append("Phno :"+res.getString(3)+"\n");
+}
+AlertDialog.Builder builder=new
+AlertDialog.Builder(MainActivity.this);
+builder.setCancelable(true);
+builder.setTitle("Company Data");
+builder.setMessage(buffer.toString());
+builder.show();
+}
+});
+}
+}
+
+DBAdapter.java
+package com.example.slip1b;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+public class DBAdapter extends SQLiteOpenHelper
+{
+public DBAdapter(Context context)
+{
+super(context, "userdata.db", null, 1);
+}
+@Override
+public void onCreate(SQLiteDatabase DB)
+{
+DB.execSQL("create Table company(id int primary key,name Text,address
+Text,phno Text)");
+}
+@Override
+public void onUpgrade(SQLiteDatabase DB, int i, int i1)
+{
+DB.execSQL("Drop Table if exists company");
+}
+public boolean insertdata(int id, String name,String address,String phno)
+{
+SQLiteDatabase DB =this.getWritableDatabase();
+
+ContentValues contentValues=new ContentValues();
+contentValues.put("id",id);
+contentValues.put("name",name);
+contentValues.put("address",address);
+contentValues.put("phno",phno);
+long result=DB.insert("company",null,contentValues);
+if(result==0)
+return false;
+else
+return true;
+}
+public Cursor getdata()
+{
+SQLiteDatabase DB =this.getWritableDatabase();
+Cursor cursor;
+cursor = DB.rawQuery("select * from company",null);
+return cursor;
+}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 2 Q.1.
+A) Create an Android Application that will change color of the screen and change the font size of text
+view using xml. [10]
+Ans:
+
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<TextView
+android:id="@+id/text_view"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_alignParentEnd="true"
+android:layout_marginEnd="89dp"
+android:text="Hello Developer...!"
+android:textSize="24sp" />
+<Button
+android:id="@+id/button"
+android:layout_width="wrap_content"
+android:layout_height="80dp"
+android:layout_alignParentStart="true"
+android:layout_alignParentTop="true"
+android:layout_alignParentEnd="true"
+
+android:layout_alignParentBottom="true"
+android:layout_marginStart="19dp"
+android:layout_marginTop="410dp"
+android:layout_marginEnd="17dp"
+android:layout_marginBottom="241dp"
+android:onClick="changeColor"
+android:text="Change Color" />
+</RelativeLayout>
+
+Main activity.java
+package com.example.slip2a;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity {
+private TextView textView;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+textView = findViewById(R.id.text_view);
+}
+public void changeColor(View view) {
+// Change the background color of the screen
+getWindow().getDecorView().setBackgroundColor(Color.rgb(10,20,80));
+// Change the font size of the TextView
+textView.setTextSize(32);
+}
+}
+
+====================================================================
+B) Java Android Program to demonstrate login form with validation [20]
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login" />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
+
+ mainActivity.class
+package com.example.pratik;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity
+{
+
+    private EditText mUsernameEditText;
+    private EditText mPasswordEditText;
+    private Button mLoginButton;
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mUsernameEditText = findViewById(R.id.usernameEditText);
+        mPasswordEditText = findViewById(R.id.passwordEditText);
+        mLoginButton = findViewById(R.id.loginButton);
+
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = mUsernameEditText.getText().toString();
+                String password = mPasswordEditText.getText().toString();
+
+                if (isValidLogin(username, password)) {
+                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private boolean isValidLogin(String username, String password)
+    {
+        if (username.equals("admin") && password.equals("password"))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 3 Q.1
+A) Create an Android Application to accept two numbers and create two buttons (power and Average).
+Display the result on the next activity on Button click [10]
+
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<EditText
+android:id="@+id/Tv1"
+android:layout_width="370dp"
+android:layout_height="48dp"
+android:layout_marginTop="80dp"
+android:hint="First NUmber"
+android:inputType="number"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.428"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+<EditText
+android:id="@+id/TV2"
+android:layout_width="366dp"
+android:layout_height="48dp"
+android:hint="Second Number"
+android:inputType="number"
+app:layout_constraintBottom_toTopOf="@+id/Bt1"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/Tv1" />
+<Button
+android:id="@+id/Bt1"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Power"
+app:layout_constraintBottom_toTopOf="@+id/Tv3"
+app:layout_constraintEnd_toStartOf="@+id/Bt2"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/TV2" />
+<Button
+android:id="@+id/Bt2"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Average"
+app:layout_constraintBottom_toTopOf="@+id/Tv3"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toEndOf="@+id/Bt1"
+
+app:layout_constraintTop_toBottomOf="@+id/TV2" />
+<TextView
+android:id="@+id/Tv3"
+android:layout_width="357dp"
+android:layout_height="33dp"
+android:hint="Answer"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/Bt1" />
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip3a;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity {
+Button Btn1,Btn2;
+EditText Ed1,Ed2;
+TextView txt;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+Button Btn1 = (Button) findViewById(R.id.Bt1);
+Button Btn2 = (Button) findViewById(R.id.Bt2);
+EditText Ed1 = (EditText) findViewById(R.id.Tv1);
+EditText Ed2 = (EditText) findViewById(R.id.TV2);
+TextView txt = (TextView) findViewById(R.id.Tv3);
+Btn2.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+int n1 = 0,n2 = 0;
+n1 = Integer.parseInt((Ed1.getText().toString()));
+n2 = Integer.parseInt(Ed2.getText().toString());
+int avg;
+avg=( n1 + n2 )/2;
+txt.setText(String.valueOf(avg));
+}
+});
+Btn1.setOnClickListener(new View.OnClickListener() {
+
+@Override
+public void onClick(View view) {
+int base,exp;
+base = Integer.parseInt(Ed1.getText().toString());
+exp = Integer.parseInt(Ed2.getText().toString());
+int res=1;
+while(exp != 0)
+{
+res *= base;
+--exp;
+}
+txt.setText(String.valueOf(res));
+}
+});
+}
+}
+===============================================================================
+B) Create an Android Application to perform following string operation according to user selection of
+radio button [20]
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<TextView
+android:id="@+id/textView"
+android:layout_width="93dp"
+android:layout_height="34dp"
+android:text="Enter String:"
+android:textAlignment="center"
+app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+app:layout_constraintEnd_toStartOf="@+id/Ed1"
+app:layout_constraintHorizontal_bias="0.307"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent"
+app:layout_constraintVertical_bias="0.756" />
+<EditText
+android:id="@+id/Ed1"
+android:layout_width="235dp"
+android:layout_height="49dp"
+android:hint="Enter String"
+android:inputType="text"
+app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+app:layout_constraintEnd_toEndOf="parent"
+
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toEndOf="@+id/textView"
+app:layout_constraintTop_toTopOf="parent"
+app:layout_constraintVertical_bias="0.748" />
+<Button
+android:id="@+id/Bt1"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="CONVERT"
+app:layout_constraintBottom_toTopOf="@+id/textView4"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.498"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+<TextView
+android:id="@+id/textView3"
+android:layout_width="82dp"
+android:layout_height="35dp"
+android:text="Output"
+android:textAlignment="center"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toStartOf="@+id/textView4"
+app:layout_constraintHorizontal_bias="0.603"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+app:layout_constraintVertical_bias="0.736" />
+<TextView
+android:id="@+id/textView4"
+android:layout_width="232dp"
+android:layout_height="36dp"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toEndOf="@+id/textView3"
+app:layout_constraintTop_toBottomOf="@+id/Bt1" />
+<RadioGroup
+android:id="@+id/radioGroup"
+android:layout_width="407dp"
+android:layout_height="260dp"
+android:layout_marginTop="216dp"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent">
+<RadioButton
+android:id="@+id/Rd1"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:minHeight="48dp"
+android:text="Upper Case"
+android:textAlignment="viewStart" />
+<RadioButton
+
+android:id="@+id/Rd2"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:minHeight="48dp"
+android:text="Lower Case" />
+<RadioButton
+android:id="@+id/Rd3"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:minHeight="48dp"
+android:text="Right 5 Character" />
+<RadioButton
+android:id="@+id/Rd4"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:minHeight="48dp"
+android:text="Left 5 Character" />
+</RadioGroup>
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip3b;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity {
+RadioButton radio1,radio2,radio3,radio4;
+Button bt1;
+EditText ed1;
+TextView tv1;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+radio1 = (RadioButton) findViewById(R.id.Rd1);
+radio2 = (RadioButton) findViewById(R.id.Rd2);
+radio3 = (RadioButton) findViewById(R.id.Rd3);
+radio4 = (RadioButton) findViewById(R.id.Rd4);
+bt1 = (Button) findViewById(R.id.Bt1);
+ed1 = (EditText) findViewById(R.id.Ed1);
+
+tv1 = (TextView) findViewById(R.id.textView4);
+bt1.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+String string = null;
+String str = ed1.getText().toString();
+if (radio1.isChecked()) {
+string = str.toUpperCase();
+}
+else if (radio2.isChecked()) {
+string = str.toLowerCase();
+}
+else if (radio3.isChecked()) {
+if (str.length() > 5){
+string = str.substring(0 , 5);
+}
+else {
+string = str;
+}
+}
+else if (radio4.isChecked()) {
+if (str.length() > 5){
+string = str.substring(str.length() - 5);
+}
+else {
+string = str;
+}
+}
+tv1.setText(string);
+}
+});
+}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 4 Q.1
+A) Create a Simple Android Application Which Send ―Helloǁ message from one activity to another with
+help of Button (Use Intent). [10]
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+
+tools:context=".MainActivity">
+<Button
+android:id="@+id/BtVar1"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="@string/send_hello_to_another_activity"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
+
+Activity_Second.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+<TextView
+android:id="@+id/textView"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="@string/hello"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent"
+android:textSize="100sp"/>
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip4a;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+public class MainActivity extends AppCompatActivity {
+Button bt;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+bt = (Button) findViewById(R.id.BtVar1);
+bt.setOnClickListener(view -> {
+
+Intent obj = new Intent(getBaseContext(), SecondActivity.class);
+startActivity(obj);
+});
+}
+}
+
+SecondActivity.java
+package com.example.slip4a;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+public class SecondActivity extends AppCompatActivity {
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_second);
+Toast.makeText(getApplicationContext(), "We are moved to second
+Activity",Toast.LENGTH_LONG).show();
+}
+}
+============================================================================
+B) Create table Company (id, name, address, phno). Create Android Application for performing
+thefollowing operation on the table.(using sqlite database)
+i) Insert New Company Details.
+ii)Show All the Company Details. [20]
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<EditText
+android:id="@+id/id"
+android:layout_width="268dp"
+android:layout_height="48dp"
+android:layout_marginTop="108dp"
+android:hint="Id"
+android:inputType="number"
+
+app:layout_constraintBottom_toTopOf="@+id/name"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+<EditText
+android:id="@+id/name"
+android:layout_width="268dp"
+android:layout_height="48dp"
+android:layout_marginTop="204dp"
+android:hint="Name"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.496"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+<EditText
+android:id="@+id/address"
+android:layout_width="266dp"
+android:layout_height="49dp"
+android:layout_marginTop="28dp"
+android:hint="address"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.524"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/name" />
+<EditText
+android:id="@+id/phno"
+android:layout_width="266dp"
+android:layout_height="48dp"
+android:hint="phone number"
+app:layout_constraintBottom_toTopOf="@+id/insert"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.524"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/address"
+app:layout_constraintVertical_bias="0.357" />
+<Button
+android:id="@+id/insert"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="insert"
+app:layout_constraintBottom_toTopOf="@+id/show"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.501"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/phno"
+app:layout_constraintVertical_bias="0.875" />
+<Button
+android:id="@+id/show"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginBottom="168dp"
+android:text="Show"
+
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.501"
+app:layout_constraintStart_toStartOf="parent" />
+<TextView
+android:id="@+id/textView"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Enter Company Details"
+app:layout_constraintBottom_toTopOf="@+id/id"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip4b;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+EditText id,name,address,phno;
+Button insert,show;
+DBAdapter DB;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+id=findViewById(R.id.id);
+name=findViewById(R.id.name);
+address=findViewById(R.id.address);
+phno=findViewById(R.id.phno);
+insert=findViewById(R.id.insert);
+show=findViewById(R.id.show);
+DB=new DBAdapter(this);
+insert.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+int id1=Integer.parseInt(id.getText().toString());
+String name1=name.getText().toString();
+String address1=address.getText().toString();
+
+String phno1=phno.getText().toString();
+boolean
+checkinsertdata=DB.insertdata(id1,name1,address1,phno1);
+if(checkinsertdata)
+Toast.makeText(MainActivity.this,"inserted
+succesfull",Toast.LENGTH_SHORT).show();
+else
+Toast.makeText(MainActivity.this,"inserted
+unsuccesfull",Toast.LENGTH_SHORT).show();
+}
+});
+show.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+Cursor res=DB.getdata();
+if(res.getCount()==0)
+{
+Toast.makeText(MainActivity.this,"NO
+ENTRY",Toast.LENGTH_SHORT).show();
+return;
+}
+StringBuffer buffer=new StringBuffer();
+while(res.moveToNext())
+{
+buffer.append("Id :"+res.getString(0)+"\n");
+buffer.append("Name :"+res.getString(1)+"\n");
+buffer.append("Address :"+res.getString(2)+"\n");
+buffer.append("Phno :"+res.getString(3)+"\n");
+}
+AlertDialog.Builder builder=new
+AlertDialog.Builder(MainActivity.this);
+builder.setCancelable(true);
+builder.setTitle("Company Data");
+builder.setMessage(buffer.toString());
+builder.show();
+}
+});
+}
+}
+
+DBAdapter.java
+package com.example.slip4b;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+public class DBAdapter extends SQLiteOpenHelper {
+public DBAdapter(Context context) {
+super(context, "userdata.db", null, 1);
+
+}
+@Override
+public void onCreate(SQLiteDatabase DB) {
+DB.execSQL("create Table company(id int primary key,name Text,address
+Text,phno Text)");
+}
+@Override
+public void onUpgrade(SQLiteDatabase DB, int i, int i1) {
+DB.execSQL("Drop Table if exists company");
+}
+public boolean insertdata(int id, String name,String address,String phno)
+{
+SQLiteDatabase DB =this.getWritableDatabase();
+ContentValues contentValues=new ContentValues();
+contentValues.put("id",id);
+contentValues.put("name",name);
+contentValues.put("address",address);
+contentValues.put("phno",phno);
+long result=DB.insert("company",null,contentValues);
+if(result==-1)
+return false;
+else
+return true;
+}
+public Cursor getdata()
+{
+SQLiteDatabase DB =this.getWritableDatabase();
+Cursor cursor= DB.rawQuery("select * from company",null);
+return cursor;
+}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 6 Q.1
+A) Write a Swift program that accept two integer values and return true if one of them is 20 or if Their
+sum is 20. [10]
+Ans:
+func isTwenty(_ a: Int, _ b: Int) -> Bool
+{
+return a == 20 || b == 20 || a + b == 20
+}
+
+let num1 = 15
+let num2 = 5
+let result = isTwenty(num1, num2)
+print("Result: \(result)")
+
+output:
+Result: true
+
+B) Java Android Program to demonstrate login form with validation [20]
+Repeat Slip2 Q.1 (B)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 7 Q.1
+A) Write a Swift program to change the first and last character of a given [10]
+Ans:
+
+func changeFirstAndLastCharacter(_ str: String) -> String
+{
+var arr = Array(str)
+let firstChar = arr[0]
+let lastChar = arr[arr.count - 1]
+arr[0] = lastChar
+arr[arr.count - 1] = firstChar
+return String(arr)
+}
+
+let str = "Hello, world!"
+let result = changeFirstAndLastCharacter(str)
+print("Original string: \(str)")
+print("Modified string: \(result)")
+output:
+Original string: Hello, world!
+Modified string: !ello, worldH
+
+=======================================================================
+B) By using Spinner, Buttons. Write a Android program to draw follow[20]
+Ans:
+
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<TableLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<TableRow>
+<TextView
+android:id="@+id/textView"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Enter items:"
+android:textSize="25dp"
+android:layout_marginTop="15dp"
+tools:layout_editor_absoluteX="27dp"
+tools:layout_editor_absoluteY="64dp"
+/>
+<EditText
+android:id="@+id/editText2"
+android:layout_width="294dp"
+android:layout_height="58dp"
+android:ems="10"
+android:inputType="textPersonName"
+android:text="Apple"
+android:layout_marginTop="15dp"
+android:textAlignment="gravity"
+tools:layout_editor_absoluteX="16dp"
+tools:layout_editor_absoluteY="121dp"
+tools:layout_marginLeft="1dp" />
+</TableRow>
+<TableRow>
+<EditText
+android:id="@+id/editText"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:ems="10"
+android:inputType="textPersonName"
+android:text="Add to spinner"
+android:layout_marginTop="15dp"
+android:textAlignment="center"
+tools:layout_editor_absoluteX="98dp"
+tools:layout_editor_absoluteY="49dp"
+
+android:gravity="center_horizontal" />
+<EditText
+android:id="@+id/editText3"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:ems="10"
+android:inputType="textPersonName"
+android:text="Remove from spinner"
+android:layout_marginTop="15dp"
+android:textAlignment="gravity"
+tools:layout_editor_absoluteX="98dp"
+tools:layout_editor_absoluteY="49dp" />
+</TableRow>
+<TextView
+android:id="@+id/textView2"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="See Response Below"
+android:textSize="20dp"
+android:layout_marginTop="100dp"
+tools:layout_editor_absoluteX="16dp"
+tools:layout_editor_absoluteY="228dp" />
+<Spinner
+android:id="@+id/spinner"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:text="Apple"
+android:layout_marginTop="25dp"
+android:textAlignment="center"
+android:gravity="center_horizontal" />
+</TableLayout>
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip7b;
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
+public class MainActivity extends Activity implements
+AdapterView.OnItemSelectedListener {
+@Override
+public void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+
+setContentView(R.layout.activity_main);
+// Spinner element
+final Spinner spinner = (Spinner) findViewById(R.id.spinner);
+// Spinner click listener
+spinner.setOnItemSelectedListener(this);
+// Spinner Drop down elements
+List<String> categories = new ArrayList<String>();
+categories.add("Apple");
+categories.add("mango");
+categories.add("Banana");
+categories.add("Orange");
+categories.add("Graps");
+categories.add("Lemons");
+// Creating adapter for spinner
+ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+android.R.layout.simple_spinner_item,
+categories);
+// Drop down layout style - list view with radio button
+dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_
+item);
+// attaching data adapter to spinner
+spinner.setAdapter(dataAdapter);
+}
+@Override
+public void onItemSelected(AdapterView<?> parent, View view, int
+position, long id) {
+// On selecting a spinner item
+String item = parent.getItemAtPosition(position).toString();
+// Showing selected spinner item
+Toast.makeText(parent.getContext(), "Selected: " + item,
+Toast.LENGTH_LONG).show();
+}
+public void onNothingSelected(AdapterView<?> arg0) {
+// TODO Auto-generated method stub
+}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 9 Q.1
+A) Write a Swift program that accept two integer values and return true if one of them is 20 or if their
+sum is 20. [10]
+Repeat Slip6 Q.1 (A)
+
+B) Write an Android Application to demonstrate Alert Dialog Box. [20]
+Ans:
+
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<Button
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:id="@+id/button"
+android:text="Close app"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintLeft_toLeftOf="parent"
+app:layout_constraintRight_toRightOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip9b;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+Button closeButton;
+AlertDialog.Builder builder;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+closeButton = (Button) findViewById(R.id.button);
+builder = new AlertDialog.Builder(this);
+closeButton.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View v) {
+builder.setMessage("Do you want to close this application ?")
+.setCancelable(false)
+.setPositiveButton("Yes", new
+DialogInterface.OnClickListener() {
+public void onClick(DialogInterface dialog, int
+id) {
+finish();
+Toast.makeText(getApplicationContext(),"you
+choose yes action for alertbox",
+Toast.LENGTH_SHORT).show();
+}
+})
+.setNegativeButton("No", new
+DialogInterface.OnClickListener() {
+public void onClick(DialogInterface dialog, int
+id) {
+// Action for 'NO' Button
+dialog.cancel();
+Toast.makeText(getApplicationContext(),"you
+choose no action for alertbox",
+Toast.LENGTH_SHORT).show();
+}
+});
+AlertDialog alert = builder.create();
+alert.setTitle("AlertDialogExample");
+alert.show();
+}
+});
+}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 10 Q.1
+A) Write an Android Program to demonstrate Activity life Cycle [10
+Repeat Slip1 Q.1 (A)
+
+B) Create an Android Application to perform following string operation according to user selection of
+radio button.[20]
+Repeat Slip3 Q.1 (B)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 11 Q.1
+A) Write a Swift program to compute the sum of the two integers. If the values are equal return the
+triple their sum. [10]
+Ans:
+func sumOrTripleSum(_ a: Int, _ b: Int) -> Int
+{
+let sum = a + b
+if a == b
+{
+return sum * 3
+}
+else
+{
+return sum
+}
+}
+let num1 = 10
+let num2 = 20
+let result = sumOrTripleSum(num1, num2)
+print("Result: \(result)")
+output:
+
+Result: 30
+
+B) Construct an Android Application to accept a number and calculate Factorial and Sum of Digits of a
+given number using Menu. [20]
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".MainActivity">
+
+        <EditText
+            android:id="@+id/input_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter a number"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/result_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
+
+Main_Activity.java
+package com.example.slip11b;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText inputNumber;
+    private TextView resultTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        inputNumber = findViewById(R.id.input_number);
+        resultTextView = findViewById(R.id.result_text_view);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.menu_factorial) {
+            calculateFactorial();
+            return true;
+        } else if (itemId == R.id.menu_sum_digits) {
+            calculateSumOfDigits();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void calculateFactorial() {
+        String input = inputNumber.getText().toString();
+
+        if (!input.isEmpty()) {
+            int number = Integer.parseInt(input);
+
+            if (number >= 0) {
+                int factorial = 1;
+                for (int i = 1; i <= number; i++) {
+                    factorial *= i;
+                }
+
+                resultTextView.setText("Factorial: " + factorial);
+            } else {
+                Toast.makeText(this, "Please enter a non-negative number.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Please enter a number.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void calculateSumOfDigits() {
+        String input = inputNumber.getText().toString();
+
+        if (!input.isEmpty()) {
+            int number = Integer.parseInt(input);
+            int sum = 0;
+
+            while (number != 0) {
+                int digit = number % 10;
+                sum += digit;
+                number /= 10;
+            }
+
+            resultTextView.setText("Sum of Digits: " + sum);
+        } else {
+            Toast.makeText(this, "Please enter a number.", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 12 Q.1
+A) Create a Simple Android Application Which Send ―Helloǁ message from one activity to another with
+help of Button (Use Intent). [10]
+Repeat Slip4 Q.1 (A)
+
+B) Create an Android application, where the user can enter player name and points in one view and
+display it in another view. [20]
+Ans:
+Main_Activity.java
+package com.example.slip12b;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity {
+EditText ed1,ed2;
+TextView Tv1;
+Button Bt1;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+ed1 = (EditText) findViewById(R.id.EdVar1);
+ed2 = (EditText) findViewById(R.id.EdVar2);
+Tv1 = (TextView) findViewById(R.id.TvVar1);
+
+Bt1 = (Button) findViewById(R.id.Bt1);
+Bt1.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+String str = ed1.getText().toString();
+int num = Integer.parseInt(ed2.getText().toString());
+Tv1.setText("Player Name:\t"+ str +"\nPoints:\t" + num);
+ed1.setText("");
+ed2.setText("");
+}
+});
+}
+}
+
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<TextView
+android:id="@+id/textView"
+android:layout_width="71dp"
+android:layout_height="51dp"
+android:text="Player Name"
+android:textAlignment="center"
+app:layout_constraintBottom_toTopOf="@+id/textView3"
+app:layout_constraintEnd_toStartOf="@+id/EdVar1"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
+<EditText
+android:id="@+id/EdVar1"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginEnd="52dp"
+android:hint="Enter The Player Name"
+android:inputType="text"
+android:minHeight="48dp"
+android:textAlignment="center"
+app:layout_constraintBottom_toTopOf="@+id/EdVar2"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toEndOf="@+id/textView"
+app:layout_constraintTop_toTopOf="parent"
+app:layout_constraintVertical_bias="0.518" />
+
+<TextView
+android:id="@+id/textView3"
+android:layout_width="71dp"
+android:layout_height="51dp"
+android:text="Points"
+android:textAlignment="center"
+app:layout_constraintBottom_toTopOf="@+id/TvVar1"
+app:layout_constraintEnd_toStartOf="@+id/EdVar2"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/textView" />
+<EditText
+android:id="@+id/EdVar2"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginEnd="36dp"
+android:hint="Enter The Points"
+android:inputType="numberDecimal"
+android:minHeight="48dp"
+android:textAlignment="center"
+app:layout_constraintBottom_toTopOf="@+id/TvVar1"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toEndOf="@+id/textView3"
+app:layout_constraintTop_toBottomOf="@+id/EdVar1" />
+<TextView
+android:id="@+id/TvVar1"
+android:layout_width="196dp"
+android:layout_height="53dp"
+android:textAlignment="center"
+app:layout_constraintBottom_toTopOf="@+id/Bt1"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.5"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/EdVar2" />
+<Button
+android:id="@+id/Bt1"
+android:layout_width="336dp"
+android:layout_height="48dp"
+android:layout_marginBottom="100dp"
+android:text="DISPLAY"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.493"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/TvVar1" />
+</android.support.constraint.ConstraintLayout>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 13 Q.1
+A) Write a Swift program to create a new string where all the character "a" have been removed except
+the first and last positions. [10]
+Ans:
+func removeMiddleAs(_ str: String) -> String
+{
+var result = ""
+let count = str.count
+if count <= 2
+{
+return str
+}
+else
+{
+result.append(str[str.startIndex]) // Append first character
+for i in 1..<count-1
+{
+let index = str.index(str.startIndex, offsetBy: i)
+if str[index] != "a"
+{
+result.append(str[index])
+}
+}
+result.append(str[str.index(before: str.endIndex)]) // Append last character
+return result
+}
+}
+let input = "apple banana avocado"
+let output = removeMiddleAs(input)
+
+print("Input string: \(input)")
+print("Output string: \(output)")
+output:
+Input string: apple banana avocado
+Output string: apple bnn vocdo
+
+=================================================================================
+B) Create table Company (id, name, address, phno). Create Android Application for performing
+thefollowing operation on the table.(using sqlite database)
+i) Insert New Company Details.
+ii)Show All the Company Details. [20]
+
+Repeat Slip4 Q.1 (B)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 14 Q.1
+
+A) Construct an Android app that toggles a light bulb on and off when the user clicks on toggle button[10]
+Ans:
+
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <RelativeLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:paddingLeft="16dp"
+ android:paddingTop="16dp"
+ android:paddingRight="16dp"
+ android:paddingBottom="16dp"
+ tools:context=".MainActivity">
+ <ImageView
+ android:id="@+id/lightBulbImageView"
+ android:layout_width="200dp"
+ android:layout_height="200dp"
+ android:src="@drawable/light_off"
+ android:layout_centerInParent="true" />
+ <ToggleButton
+ android:id="@+id/toggleButton"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_below="@id/lightBulbImageView"
+ android:layout_centerHorizontal="true"
+ android:textOff="OFF"
+ android:textOn="ON" />
+ </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.java
+package com.example.slip14a;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.ToggleButton;
+public class MainActivity extends AppCompatActivity {
+ private ImageView lightBulbImageView;
+ private ToggleButton toggleButton;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ lightBulbImageView = findViewById(R.id.lightBulbImageView);
+ toggleButton = findViewById(R.id.toggleButton);
+ toggleButton.setOnCheckedChangeListener(new 
+CompoundButton.OnCheckedChangeListener() {
+ @Override
+ public void onCheckedChanged(CompoundButton buttonView, boolean 
+isChecked) {
+ if (isChecked) {
+ lightBulbImageView.setImageResource(R.drawable.light_on);
+ } else {
+ 
+lightBulbImageView.setImageResource(R.drawable.light_off);
+ }
+ }
+ });
+ }
+}
+
+
+
+B) Construct an Android application to accept a number and calculate Armstrong and Perfect number of
+a given number using Menu. [20]
+Ans:
+Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<EditText
+android:id="@+id/et"
+android:layout_width="253dp"
+android:layout_height="50dp"
+
+android:hint="Enter a number"
+tools:ignore="MissingConstraints"
+tools:layout_editor_absoluteX="16dp"
+tools:layout_editor_absoluteY="100dp" />
+</android.support.constraint.ConstraintLayout>
+
+Mymenu.xml
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:id="@+id/perfect"
+android:title="Perfect" />
+<item android:id="@+id/arms"
+android:title="Armstrong" />
+</menu>
+
+MainActivity.java
+package com.example.slip14b;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+int num;
+String value;
+EditText et;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+}
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+//return super.onCreateOptionsMenu(menu);
+MenuInflater mi = getMenuInflater();
+mi.inflate(R.menu.mymenu, menu);
+return true;
+}
+@Override
+public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//return super.onOptionsItemSelected(item);
+et=(EditText) findViewById(R.id.et);
+value= et.getText().toString();
+
+if(!value.isEmpty()){
+try{
+num = Integer.parseInt(value);
+int id;
+id= item.getItemId();
+int t=num;
+switch(id){
+case R.id.perfect:int ans=0;
+int div=1;
+while(div<t){
+if (t%div==0)
+ans=ans + div;
+div++;
+}
+if(ans==num)
+Toast.makeText(getApplicationContext(), "Number
+"+ num+ " is perfect", Toast.LENGTH_SHORT).show();
+else
+Toast.makeText(getApplicationContext(), "Number
+"+ num+ " is not perfect", Toast.LENGTH_SHORT).show();
+break;
+case R.id.arms:ans=0;
+while(t>0){
+int rem = t%10;
+ans += Math.pow(rem, 3);
+t=t/10;
+}
+if(ans==num)
+Toast.makeText(this, "Number "+ num + " is an
+armstrong number", Toast.LENGTH_SHORT).show();
+else
+Toast.makeText(this, "Number "+ num + " is not an
+armstrong number", Toast.LENGTH_SHORT).show();
+break;
+}
+}
+catch (NumberFormatException ne){
+Log.e("Error", ""+ne.getMessage());
+}
+}
+return true;
+}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 15 Q.1
+A) Write an Android code to merge given two Array
+List 1
+List 2
+List 3
+Merge
+Ans:
+
+
+B) Write an Android Application to send Email. [20]
+Ans:
+Activity_Main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<EditText
+android:id="@+id/to"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="40dp"
+android:hint="to"
+android:minHeight="48dp"
+app:layout_constraintTop_toBottomOf="@+id/from"
+tools:layout_editor_absoluteX="-4dp" />
+<EditText
+android:id="@+id/sub"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="64dp"
+android:hint="sub"
+android:minHeight="48dp"
+app:layout_constraintTop_toBottomOf="@+id/to"
+tools:layout_editor_absoluteX="0dp" />
+<EditText
+android:id="@+id/msg"
+android:layout_width="407dp"
+android:layout_height="124dp"
+android:layout_marginTop="40dp"
+android:hint="message"
+app:layout_constraintTop_toBottomOf="@+id/sub"
+tools:layout_editor_absoluteX="0dp"
+tools:ignore="MissingConstraints" />
+<Button
+android:id="@+id/send"
+
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="28dp"
+android:text="Send"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/msg"
+app:layout_constraintVertical_bias="0.284"
+tools:layout_editor_absoluteX="0dp" />
+<EditText
+android:id="@+id/from"
+android:layout_width="391dp"
+android:layout_height="48dp"
+android:layout_marginTop="108dp"
+android:ems="10"
+android:hint="From"
+android:inputType="textPersonName"
+app:layout_constraintTop_toTopOf="parent"
+tools:ignore="MissingConstraints"
+tools:layout_editor_absoluteX="4dp" />
+</android.support.constraint.ConstraintLayout>
+
+MainActivity.xml
+package com.example.slip15b;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+public class MainActivity extends AppCompatActivity {
+EditText etto,etmessage,etsubject,etfrom;
+Button btsend;
+@SuppressLint("MissingInflatedId")
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+etfrom=findViewById(R.id.from);
+etto=findViewById(R.id.to);
+etmessage=findViewById(R.id.msg);
+etsubject=findViewById(R.id.sub);
+btsend=findViewById(R.id.send);
+btsend.setOnClickListener(new OnClickListener() {
+@Override
+public void onClick(View v) {
+Intent intent =new Intent(Intent.ACTION_VIEW,
+Uri.parse("mailto:"+ etto.getText().toString()));
+
+intent.putExtra(Intent.EXTRA_SUBJECT,etsubject.getText().toString());
+intent.putExtra(Intent.EXTRA_TEXT,etmessage.getText().toString());
+startActivity(intent);
+}
+});
+}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 16 Q.1
+A) Create a Simple Android Application Which Send ―Helloǁ message from one activity to another with
+help of Button (Use Intent). [10]
+Repeat Slip4 & slip12 Q.1 (A)
+
+B) Construct an Android Application to accept a number and calculate Factorial and Sum of Digits of a
+given number using Menu. [20]
+Repeat slip11 Q.1 (B)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 17 Q.1
+A) Write a Swift program to find the Factorial of a given Number. [10]
+Ans:
+func factorial(_ num: Int) -> Int
+{
+if num == 0
+{
+return 1
+}
+else
+{
+return num * factorial(num - 1)
+}
+
+}
+let num = 5
+let result = factorial(num)
+print("Factorial of \(num) is \(result)")
+output:
+Factorial of 5 is 120
+
+B) Create an Android application, where the user can enter player name and points in one view and
+display it in another view. [20]
+Repeat slip12 Q.1 (B)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Slip 18 Q.1
+A) Write an Android Program to Demonstrate Date Picker Dialog in Android [10]
+Ans:
+Main Activity.java:
+package com.example.slip18a;
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import java.util.Calendar;
+public class MainActivity extends AppCompatActivity {
+Button btnDatePicker;
+TextView txtDate;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+btnDatePicker=(Button)findViewById(R.id.btn_datepicker);
+txtDate=(TextView)findViewById(R.id.txt_date);
+btnDatePicker.setOnClickListener(new View.OnClickListener() {
+@Override
+
+public void onClick(View view) {
+// Get Current Date
+final Calendar c = Calendar.getInstance();
+int mYear = c.get(Calendar.YEAR);
+int mMonth = c.get(Calendar.MONTH);
+int mDay = c.get(Calendar.DAY_OF_MONTH);
+// Launch DatePicker Dialog
+DatePickerDialog datePickerDialog = new
+DatePickerDialog(MainActivity.this,
+new DatePickerDialog.OnDateSetListener() {
+@Override
+public void onDateSet(DatePicker view, int year,
+int monthOfYear, int
+dayOfMonth) {
+// Display Selected Date
+txtDate.setText(dayOfMonth + "-" +
+(monthOfYear + 1) + "-" + year);
+}
+}, mYear, mMonth, mDay);
+datePickerDialog.show();
+}
+});
+}
+}
+
+Activity_main.xml :
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:orientation="vertical" android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<Button
+android:id="@+id/btn_datepicker"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Select Date" />
+<TextView
+android:id="@+id/txt_date"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Selected Date will display here" />
+</LinearLayout>
+
+B) Write an Android Application to send Email. [20]
+
+Repeat slip15 Q.1 (B)
+
